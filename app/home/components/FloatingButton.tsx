@@ -2,10 +2,10 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { w } from '@/utils/Dimensions';
-import Animated, { 
-  useAnimatedStyle, 
-  useSharedValue, 
-  withSpring, 
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
   interpolateColor,
   withSequence
 } from 'react-native-reanimated';
@@ -18,7 +18,7 @@ interface FloatingButtonProps {
   isLike?: boolean;
 }
 
-export const FloatingButton = ({ onPress, icon, color, size = 56, isLike }: FloatingButtonProps) => {
+export const FloatingButton = ({ onPress, icon, color, size = 46, isLike }: FloatingButtonProps) => {
   const scale = useSharedValue(1);
   const fill = useSharedValue(0);
 
@@ -40,12 +40,12 @@ export const FloatingButton = ({ onPress, icon, color, size = 56, isLike }: Floa
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
-    backgroundColor: isLike 
+    backgroundColor: isLike
       ? interpolateColor(
-          fill.value,
-          [0, 1],
-          [color, '#FF4C4C']
-        )
+        fill.value,
+        [0, 1],
+        [color, '#FF4C4C']
+      )
       : color,
   }));
 
@@ -53,22 +53,22 @@ export const FloatingButton = ({ onPress, icon, color, size = 56, isLike }: Floa
     <Animated.View
       style={[
         styles.button,
-        { 
+        {
           width: w(size),
           height: w(size),
-          borderRadius: w(size/2),
+          borderRadius: w(size / 2),
         },
         animatedStyle
       ]}
     >
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={handlePress}
         style={styles.touchable}
       >
-        <Ionicons 
-          name={isLike && fill.value > 0 ? 'heart' : icon} 
-          size={size * 0.45} 
-          color="white" 
+        <Ionicons
+          name={isLike && fill.value > 0 ? 'heart' : icon}
+          size={size * 0.45}
+          color="white"
         />
       </TouchableOpacity>
     </Animated.View>

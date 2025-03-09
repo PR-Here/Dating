@@ -13,6 +13,7 @@ import Profile from '@/app/profile/Profile';
 import Settings from '@/app/settings/Settings';
 import { CustomTabBar } from './CustomTabBar';
 import { TabBarIcon } from './TabbarIcon';
+import ChatScreen from '@/app/chat/[id]';
 
 const Tab = createBottomTabNavigator();
 const { width } = Dimensions.get('window');
@@ -47,11 +48,11 @@ export default function BottomTabs() {
         }}
       />
       <Tab.Screen
-        name={SCREENS.PROFILE}
-        component={Profile}
+        name={SCREENS.CHAT}
+        component={ChatScreen}
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="person-outline" color={color} focused={focused} styles={styles} />
+            <TabBarIcon name="chatbox-outline" color={color} focused={focused} styles={styles} />
           ),
         }}
       />

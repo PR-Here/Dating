@@ -20,6 +20,8 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
 import { FloatingButton } from './FloatingButton';
+import { SCREENS } from '@/constants/Screens';
+import { navigate } from '@/navigation/RootNavigation';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.3;
 
@@ -118,18 +120,15 @@ export const MatchCard = ({ data, onLike, onPass, onMessage, isFirst, index }: M
   const Container = isFirst ? PanGestureHandler : Animated.View;
 
   const handleChat = () => {
-    router.push({
-      pathname: '/chat/[id]',
-      params: { id: data.id, image: data.image, name: data.name }
-    });
+    navigate(SCREENS.CHAT, { id: data.id, image: data.image, name: data.name });
   };
 
   return (
     <Container onGestureEvent={isFirst ? gestureHandler : undefined}>
       <Animated.View style={[styles.container, cardStyle]}>
         <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: data.image }} 
+          <Image
+            source={{ uri: data.image }}
             style={styles.image}
             onLoadStart={() => setImageLoading(true)}
             onLoadEnd={() => setImageLoading(false)}
@@ -279,7 +278,7 @@ const styles = StyleSheet.create({
   },
   floatingButtonsContainer: {
     position: 'absolute',
-    bottom: h(-30),
+    bottom: h(-20),
     left: 0,
     right: 0,
     flexDirection: 'row',

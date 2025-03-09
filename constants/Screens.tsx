@@ -21,6 +21,7 @@ export const SCREENS = {
   SUCCESS: 'success',
   BOTTOM_TABS: 'bottom-tabs',
   MAIN: 'main',
-  
-
+  CHAT:'chat',
+  FILTER: 'filter',
+  PROFILE_IMAGE_UPLOAD: 'profile-image-upload',
 } as const; 

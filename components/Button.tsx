@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Pressable, StyleSheet, ViewStyle, TextStyle, View } from 'react-native';
 import { Text } from './Text';
 import { EButtonSize, EButtonVariant } from '@/types/ButtonTypes';
 import { w, h } from '@/utils/Dimensions';
@@ -11,7 +11,8 @@ interface ButtonProps {
   label: string;
   onPress: () => void;
   disabled?: boolean;
-  leftIcon?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -23,6 +24,7 @@ export function Button({
   onPress,
   disabled = false,
   leftIcon,
+  rightIcon,
   style,
   textStyle,
 }: ButtonProps) {
@@ -40,7 +42,9 @@ export function Button({
       disabled={disabled}
     >
       {leftIcon && (
-        <Text>{leftIcon}</Text>
+        <View style={styles.leftIcon}>
+          {leftIcon}
+        </View>
       )}
       <Text style={[
         styles.text,
@@ -50,6 +54,11 @@ export function Button({
       ]}>
         {label}
       </Text>
+      {rightIcon && (
+        <View style={styles.rightIcon}>
+          {rightIcon}
+        </View>
+      )}
     </Pressable>
   );
 }
@@ -125,5 +134,11 @@ const styles = StyleSheet.create({
   },
   largeText: {
     fontSize: w(18),
+  },
+  leftIcon: {
+    marginRight: w(8),
+  },
+  rightIcon: {
+    marginLeft: w(8),
   },
 }); 

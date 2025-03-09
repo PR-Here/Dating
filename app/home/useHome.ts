@@ -1,11 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { MatchData } from '@/types/MatchDataType';
-import { FilterValues } from './components/FilterScreen';
 
 export const useHome = () => {
   const [newMatches, setNewMatches] = useState<MatchData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [openFilterBottomSheet, setOpenFilterBottomSheet] = useState(false);
+  const [isShowInterestsModal, setIsShowInterestsModal] = useState(false);
   const isFetching = useRef(false);
 
   const fetchNewMatches = useCallback(async (): Promise<MatchData[]> => {
@@ -73,10 +72,6 @@ export const useHome = () => {
     }
   }, [fetchNewMatches]);
 
-  const handleApplyFilters = useCallback((filters: FilterValues) => {
-    console.log('Applying filters:', filters);
-    setOpenFilterBottomSheet(false);
-  }, []);
 
   // Initial data fetch
   useEffect(() => {
@@ -137,8 +132,7 @@ export const useHome = () => {
     refreshData,
     isLoading,
     resetMatches,
-    openFilterBottomSheet,
-    setOpenFilterBottomSheet,
-    handleApplyFilters,
+    isShowInterestsModal,
+    setIsShowInterestsModal,
   };
 };

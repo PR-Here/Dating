@@ -1,44 +1,63 @@
-import React from 'react';
-import { View, StyleSheet, } from 'react-native';
-import { Text } from '@/components/Text';
-import { ETextType, ETextWeight } from '@/types/TextType';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { MatchCard } from './components/MatchCard';
-import { StoryCircle } from './components/StoryCircle';
-import { ActionButton } from './components/ActionButton';
 import { useHome } from './useHome';
-import { Ionicons } from '@expo/vector-icons';
-import { primary, backgroundLight } from '@/constants/Colors';
+import { backgroundDark } from '@/constants/Colors';
 import { w, h } from '@/utils/Dimensions';
 import HomeHeader from './components/HomeHeader';
-import { FilterScreen } from './components/FilterScreen';
-import { EModalType } from '@/types/ModalType';
-import { Modal } from '@/components/Modal';
+import { SCREENS } from '@/constants/Screens';
+import { navigate } from '@/navigation/RootNavigation';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+
+const MAX_VISIBLE_CARDS = 3;
 
 export default function Home() {
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
     const {
-        stories,
         newMatches,
         handleLike,
         handlePass,
         handleMessage,
-        refreshData,
-        isLoading,
-        openFilterBottomSheet,
-        setOpenFilterBottomSheet,
-        handleApplyFilters,
+        isShowInterestsModal,
+        setIsShowInterestsModal,
     } = useHome();
 
+    const handlePresentFilter = useCallback(() => {
+        navigate(SCREENS.FILTER);
+    }, []);
+
+    const handleOpenInterests = useCallback(() => {
+        bottomSheetRef.current?.present();
+    }, []);
+
+    const handleCloseInterests = useCallback(() => {
+        bottomSheetRef.current?.dismiss();
+        setIsShowInterestsModal(false);
+    }, []);
+
+    // Only render the first few cards
+    const visibleCards = useMemo(() => {
+        return newMatches.slice(0, MAX_VISIBLE_CARDS);
+    }, [newMatches]);
+
+    const openProfile = useCallback(() => {
+        navigate(SCREENS.PROFILE);
+    }, []);
 
     return (
         <View style={styles.container}>
-            <HomeHeader onProfilePress={() => { }} onFilterPress={() => setOpenFilterBottomSheet(true)} onNotificationPress={() => { }} />
+            <HomeHeader
+                onProfilePress={openProfile}
+                onFilterPress={handleOpenInterests}
+                onNotificationPress={() => { }}
+            />
             <View style={styles.cardsContainer}>
-                {newMatches.map((match, index) => (
+                {visibleCards.map((match, index) => (
                     <View
                         key={match.id}
                         style={[
                             styles.cardWrapper,
-                            { zIndex: newMatches.length - index }
+                            { zIndex: visibleCards.length - index }
                         ]}
                     >
                         <MatchCard
@@ -52,19 +71,6 @@ export default function Home() {
                     </View>
                 ))}
             </View>
-            {openFilterBottomSheet && (
-                <Modal
-                    position={EModalType.TOP}
-                    visible={openFilterBottomSheet}
-                    onClose={() => setOpenFilterBottomSheet(false)}
-                    height={h(500)}
-                >
-                    <FilterScreen
-                        onClose={() => setOpenFilterBottomSheet(false)}
-                        onApply={handleApplyFilters}
-                    />
-                </Modal>
-            )}
         </View>
     );
 }
@@ -72,15 +78,14 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: backgroundLight,
+        backgroundColor: backgroundDark,
     },
-
     cardsContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: w(4),
-        marginTop: h(60), // Adjust based on header height
+        marginTop: h(60),
     },
     cardWrapper: {
         position: 'absolute',

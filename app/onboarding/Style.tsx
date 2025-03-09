@@ -41,7 +41,7 @@ export const createStyles = () => StyleSheet.create({
   },
   blurContainer: {
     paddingHorizontal: w(20),
-    paddingVertical: h(16),
+    paddingVertical: h(18),
    
   },
   headerText: {
@@ -51,6 +51,7 @@ export const createStyles = () => StyleSheet.create({
   title: {
     color: text,
     fontFamily: Typography.fontFamily.bold,
+    fontSize: font(24),
   },
   description: {
     color: textSecondary,

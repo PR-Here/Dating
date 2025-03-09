@@ -7,6 +7,7 @@ import { ETextType } from '@/types/TextType';
 import { EButtonSize, EButtonVariant } from '@/types/ButtonTypes';
 import { textSecondary, primary, backgroundLight } from '@/constants/Colors';
 import RangeSlider from 'rn-range-slider';
+import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 interface FilterScreenProps {
   onClose: () => void;
@@ -21,187 +22,37 @@ export interface FilterValues {
   interests: string[];
 }
 
-export const FilterScreen = ({ onClose, onApply }: FilterScreenProps) => {
-  const [distance, setDistance] = useState(25);
-  const [ageRange, setAgeRange] = useState<[number, number]>([18, 35]);
-  const [gender, setGender] = useState('all');
-  const [lookingFor, setLookingFor] = useState<string[]>(['Casual']);
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+export const FilterScreen = React.forwardRef<BottomSheetModal, FilterScreenProps>(
+  ({ onClose, onApply }, ref) => {
+    const snapPoints = React.useMemo(() => ['70%'], []);
 
-  const INTERESTS = [
-    'Travel', 'Music', 'Food', 'Art', 'Sports', 
-    'Reading', 'Gaming', 'Cooking', 'Yoga', 'Hiking'
-  ];
-
-  const LOOKING_FOR = ['Casual', 'Serious', 'Marriage'];
-  const GENDERS = ['All', 'Men', 'Women', 'Non-binary'];
-
-  const handleApply = () => {
-    onApply({
-      distance,
-      ageRange,
-      gender,
-      lookingFor,
-      interests: selectedInterests,
-    });
-    onClose();
-  };
-
-  const toggleInterest = (interest: string) => {
-    setSelectedInterests(prev => 
-      prev.includes(interest) 
-        ? prev.filter(i => i !== interest)
-        : [...prev, interest]
-    );
-  };
-
-  const toggleLookingFor = (type: string) => {
-    setLookingFor(prev => 
-      prev.includes(type) 
-        ? prev.filter(t => t !== type)
-        : [...prev, type]
-    );
-  };
-
-  const handleDistanceChange = useCallback((low: number) => {
-    setDistance(low);
-  }, []);
-
-  const handleAgeRangeChange = useCallback((low: number, high: number) => {
-    setAgeRange([low, high]);
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false} 
-        bounces={false}
-      >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text variant={ETextType.H2}>Filters</Text>
-            <Button
-              variant={EButtonVariant.TEXT}
-              size={EButtonSize.SMALL}
-              label="Reset"
-              onPress={() => {/* Reset logic */}}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text variant={ETextType.Body2} color={textSecondary}>Distance</Text>
-            <Text variant={ETextType.H3} style={styles.valueText}>
-              {distance} km
-            </Text>
-            <RangeSlider
-              style={styles.slider}
-              min={1}
-              max={100}
-              step={1}
-              floatingLabel
-              renderThumb={() => <View style={styles.thumb} />}
-              renderRail={() => <View style={styles.rail} />}
-              renderRailSelected={() => <View style={styles.railSelected} />}
-              low={distance}
-              onValueChanged={handleDistanceChange}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text variant={ETextType.Body2} color={textSecondary}>Age Range</Text>
-            <Text variant={ETextType.H3} style={styles.valueText}>
-              {ageRange[0]} - {ageRange[1]}
-            </Text>
-            <RangeSlider
-              style={styles.slider}
-              min={18}
-              max={70}
-              step={1}
-              floatingLabel
-              renderThumb={() => <View style={styles.thumb} />}
-              renderRail={() => <View style={styles.rail} />}
-              renderRailSelected={() => <View style={styles.railSelected} />}
-              low={ageRange[0]}
-              high={ageRange[1]}
-              onValueChanged={handleAgeRangeChange}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text variant={ETextType.Body2} color={textSecondary}>Show Me</Text>
-            <View style={styles.optionsContainer}>
-              {GENDERS.map((g) => (
-                <Button
-                  key={g}
-                  variant={gender.toLowerCase() === g.toLowerCase() ? EButtonVariant.PRIMARY : EButtonVariant.OUTLINE}
-                  size={EButtonSize.SMALL}
-                  label={g}
-                  onPress={() => setGender(g.toLowerCase())}
-                  style={styles.optionButton}
-                />
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text variant={ETextType.Body2} color={textSecondary}>Looking For</Text>
-            <View style={styles.optionsContainer}>
-              {LOOKING_FOR.map((type) => (
-                <Button
-                  key={type}
-                  variant={lookingFor.includes(type) ? EButtonVariant.PRIMARY : EButtonVariant.OUTLINE}
-                  size={EButtonSize.SMALL}
-                  label={type}
-                  onPress={() => toggleLookingFor(type)}
-                  style={styles.optionButton}
-                />
-              ))}
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text variant={ETextType.Body2} color={textSecondary}>Interests</Text>
-            <View style={styles.optionsContainer}>
-              {INTERESTS.map((interest) => (
-                <Button
-                  key={interest}
-                  variant={selectedInterests.includes(interest) ? EButtonVariant.PRIMARY : EButtonVariant.OUTLINE}
-                  size={EButtonSize.SMALL}
-                  label={interest}
-                  onPress={() => toggleInterest(interest)}
-                  style={styles.optionButton}
-                />
-              ))}
-            </View>
-          </View>
-
-          <Button
-            variant={EButtonVariant.PRIMARY}
-            size={EButtonSize.LARGE}
-            label="Apply Filters"
-            onPress={handleApply}
-            style={styles.applyButton}
+    return (
+      <BottomSheetModal
+        ref={ref}
+        snapPoints={snapPoints}
+        index={0}
+        enablePanDownToClose
+        onDismiss={onClose}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
           />
+        )}
+      >
+        <View style={styles.container}>
+          <Text variant={ETextType.H2}>Filters</Text>
+          {/* ... rest of your content ... */}
         </View>
-      </ScrollView>
-    </View>
-  );
-};
+      </BottomSheetModal>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    backgroundColor: backgroundLight,
-  },
-  scrollView: {
     flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
     padding: w(24),
   },
   header: {
@@ -209,6 +60,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: h(24),
+  },
+  content: {
+    flex: 1,
+  },
+  footer: {
+    paddingVertical: h(16),
   },
   section: {
     marginBottom: h(24),
@@ -244,9 +101,5 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     minWidth: w(80),
-  },
-  applyButton: {
-    marginTop: h(24),
-    marginBottom: h(48),
   },
 }); 
